@@ -3,6 +3,7 @@ from tkinter.ttk import *
 from tkinter import messagebox
 from random import random
 import re
+import pyinputplus
 
 form = Tk()
 
@@ -21,11 +22,13 @@ var3 = IntVar()
 var4 = IntVar()
 
 
+# Function definition to display an error when the user's input is a number
 def TakeTextUser(text):
     if text == int:
         messagebox.showerror(message="Please Enter Just Letter!!!")
 
 
+# Function definition to display an error when the user's input is a string or greater than 15
 def TakeLen(num):
     if num >= 15:
         messagebox.showerror(message="Please Enter a True Number!!!")
@@ -33,6 +36,7 @@ def TakeLen(num):
         messagebox.showerror(message="Please Enter just Number")
 
 
+# Function definition to display an error when the user's input is a string or greater than 2000
 def numberOfWord(num):
     if num == str:
         messagebox.showerror(message="Please Enter just Number")
@@ -40,13 +44,15 @@ def numberOfWord(num):
         messagebox.showerror(message="Enter a True Number")
 
 
-def ReadFile(file):
+# Reading the file and separating the words
+def readFile(file):
     OpenFile = open(file)
     ReadFile = OpenFile.read()
     SpiltWordInFile = ReadFile.split()
     return SpiltWordInFile
 
 
+# To return to the first page for another search
 def show():
     laAsk.place(x=1, y=30),
     choiceList.place(x=185, y=30),
@@ -71,6 +77,7 @@ def show():
     btnSearchLetters.place_forget()
 
 
+# To go to the second page to search for the desired word or words
 def public():
     laAsk.place_forget(),
     choiceList.place_forget(),
@@ -86,6 +93,7 @@ def public():
     btnOk.place_forget()
 
 
+# Each of the search types selected, what items to display on the second page
 def Choiced(select):
     if select == 'Letter (be every where)':
         public(),
@@ -121,6 +129,9 @@ def Choiced(select):
         textLetters.pack(),
 
 
+# When the user only needs to enter
+# one word to search for the desired word, if
+# more than one word is entered, an error will be displayed.
 def ONLetter(text):
     TakeTextUser(takeText)
     while len(text) >= 2:
@@ -129,24 +140,30 @@ def ONLetter(text):
         break
 
 
+# Search words and display words
+# according to user inputs (number of letters in each word, number of words)
+# The letters we received from the user may be anywhere in the word
 def Letters():
     Text = takeText.get(1.0, 'end-1c')
     NumWord = takeNumWord.get(1.0, 'end-1c')
     LenWord = takeLenWord.get(1.0, 'end-1c')
 
-    OpenFile = open('WordsEnglish.txt').read()
+    OpenFile = readFile('WordsEnglish.txt')
     num = 0
     new = []
-    for n, letter in enumerate(Text):
-        pattern = re.compile('/^CTR.*' + letter[:n] + '\w?' + letter[n + 1:] + '.*$/m')
-        # pattern = ''
-        new.extend(re.findall(pattern, OpenFile))
+    for word in OpenFile:
 
-        # new = list(set(new))
-        myList.insert(END, new)
-        print(myList)
+        if all(x in word for x in Text):
+            if len(word) == int(LenWord):
+                myList.insert(END, word)
+                num += 1
+        if num == int(NumWord):
+            break
 
 
+# Search words and display words according
+# to user inputs (number of letters in each word, number of words)
+# The letter we received from the user may be anywhere in the word
 def Letter():
     Text = takeText.get(1.0, 'end-1c')
     NumWord = takeNumWord.get(1.0, 'end-1c')
@@ -154,7 +171,7 @@ def Letter():
     ONLetter(Text)
     number = 0
 
-    file = ReadFile('WordsEnglish.txt')
+    file = readFile('WordsEnglish.txt')
     for word in file:
         ListWord = [word]
         for Item in ListWord:
@@ -167,6 +184,10 @@ def Letter():
             break
 
 
+# Search words and display words according
+# to user inputs (number of letters in each word, number of words).
+# The letter we have received is at the end of the words
+# displayed to the user.
 def EndLetter():
     Text = takeText.get(1.0, 'end-1c')
     NumWord = takeNumWord.get(1.0, 'end-1c')
@@ -174,7 +195,7 @@ def EndLetter():
     ONLetter(Text)
     number = 0
 
-    file = ReadFile('WordsEnglish.txt')
+    file = readFile('WordsEnglish.txt')
     for word in file:
         m = [word]
         for Item in m[0][-1]:
@@ -188,6 +209,10 @@ def EndLetter():
             break
 
 
+# Search words and display words according
+# to user inputs (number of letters in each word, number of words).
+# The letters we have received are at the end
+# of the words displayed to the user.
 def EndLetters():
     Text = takeText.get(1.0, 'end-1c')
     NumWord = takeNumWord.get(1.0, 'end-1c')
@@ -195,16 +220,16 @@ def EndLetters():
 
     number = 0
     lenTakeText = len(Text)
-    file = ReadFile('WordsEnglish.txt')
+    file = readFile('WordsEnglish.txt')
     for word in file:
         m = [word]
-        b =int(lenTakeText)
-        lenWord = m[0][b:-1]
 
-        if Text == lenWord:
+        b = int(lenTakeText)
 
-            if len(word) == lenTakeText:
+        lenW = m[0][-b:]
+        if Text == lenW:
 
+            if len(word) == int(LenWord):
                 myList.insert(END, word)
                 number += 1
 
@@ -212,6 +237,10 @@ def EndLetters():
             break
 
 
+# Search words and display words according to user
+# inputs (number of letters in each word, number of words)
+# The letters we have received are at the end of
+# the words displayed to the user
 def StarLetter():
     Text = takeText.get(1.0, 'end-1c')
     NumWord = takeNumWord.get(1.0, 'end-1c')
@@ -219,7 +248,7 @@ def StarLetter():
     ONLetter(Text)
     number = 0
 
-    file = ReadFile('WordsEnglish.txt')
+    file = readFile('WordsEnglish.txt')
     for word in file:
         m = [word]
 
@@ -236,6 +265,10 @@ def StarLetter():
             break
 
 
+# Search words and display words according
+# to user inputs (number of letters in each word, number of words).
+# The letters we have received are at the beginning
+# of the words displayed to the user.
 def StarLetters():
     Text = takeText.get(1.0, 'end-1c')
     NumWord = takeNumWord.get(1.0, 'end-1c')
@@ -244,7 +277,7 @@ def StarLetters():
     number = 0
     lenTakeText = int(len(Text))
 
-    file = ReadFile('WordsEnglish.txt')
+    file = readFile('WordsEnglish.txt')
 
     for word in file:
         m = [word]
@@ -258,6 +291,7 @@ def StarLetters():
             break
 
 
+# A list of search types
 options = [
     'Letter (be every where)',
     'Letter (be every where)',
@@ -271,21 +305,31 @@ options = [
 
 clicked = StringVar()
 
+# The text asking the user to select the type of search
 laAsk = Label(form, text='Please specify your search type:')
 laAsk.place(x=1, y=30)
 
+# List menu for selecting the type of search by the user
 choiceList = OptionMenu(form, clicked, *options)
 choiceList.place(x=185, y=30)
 
+# The text asking the user
+# to enter the number of letters of the desired words
 lblTakeLen = Label(form, text="Please Enter Number of letter ")
 lblTakeLen.place(x=1, y=87)
 
+# The text asking the user to enter the number
+# of letters of the words that the user wants in the search result
 takeLenWord = Text(form, width=15, height=1)
 takeLenWord.place(x=185, y=87)
 
+# text box taking the number of words the
+# user wants in the search result
 lblNumWord = Label(form, text="Please Enter Number of Word")
 lblNumWord.place(x=1, y=137)
 
+# Getting the number of letters
+# of the words that the user wants in the search result.
 takeNumWord = Text(form, width=15, height=1)
 takeNumWord.place(x=185, y=137)
 
@@ -296,16 +340,20 @@ def v(): Choiced(clicked.get())
 btnOk = Button(text='OK', command=v)
 btnOk.place(x=134, y=230)
 
+# Text asking the user to enter letter to search for words
 textLetter = Label(form, text="Please Enter Your letter:")
 
+# Text asking the user to enter letters to search for words
 textLetters = Label(form, text="Please Enter Your letters:")
 
-takeText = Text(width=20, height=1)
+# Taking letters from the user to search for the desired words
+takeText = Text(width=20, height=1, )
 
 # listScroll = Scrollbar(form)
 
 myList = Listbox(form, )
 
+# Search button
 btnSearchLetter = Button(form, text='Search', command=Letter)
 
 btnSearchLetters = Button(form, text='Search', command=Letters)
